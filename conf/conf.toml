@@ -1,0 +1,14 @@
+[service]
+    [service.app]
+        port = "8287"
+        host = "localhost:8287"
+        logLevel = "Info"
+        logOut = "stdout"
+        logFormat = "text"
+
+    [service.mongo]
+        dbName = "amphora"
+        hosts = ["localhost:27017"]
+        userName = ""
+        password = ""
+        timeout = 30

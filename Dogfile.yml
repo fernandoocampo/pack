@@ -1,0 +1,39 @@
+- task: lint
+  description: Run all go linters
+  pre: install-tools
+  runner: sh
+  code: |
+    echo "Linting go packages:"
+    CGO_ENABLED=0 gometalinter --deadline=200s --enable=gofmt --vendor  ./...
+ 
+- task: compile
+  description: Compiles the application
+  pre: install-tools
+  runner: sh
+  code: |
+    echo "Compiling application: bin/main"
+    go build -o bin/main  main.go
+
+- task: clean
+  description: Deletes temporary files
+  runner: sh
+  code: |
+    echo "Deleting application: bin/main"
+    rm -rf bin/*
+
+- task: pulldeps
+  description: pull required dependencies
+  pre: install-tools
+  runner: sh
+  code: |
+    echo "Pulling dependencies"
+    dep ensure
+
+- task: install-tools
+  description: Installs building dependencies
+  runner: sh
+  code: |
+    go get -u github.com/alecthomas/gometalinter
+    go get github.com/golang/dep/cmd/dep
+    gometalinter --install &>/dev/null
+    

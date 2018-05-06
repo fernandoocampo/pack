@@ -1,0 +1,27 @@
+image: mariomazo/golangdev
+pipelines:
+  default:
+    - step:
+        script:
+          - source bitbucket-pipelines-go.sh
+
+          # Setup access to repo
+          - mkdir ~/.ssh || true
+          - 'echo -e "Host *\n StrictHostKeyChecking no\n UserKnownHostsFile=/dev/null" > ~/.ssh/config' # Allow SSH conections witout verification
+          - echo $SSH_KEY_UTILS > ~/.ssh/id_rsa.tmp # note: assumes base64 encoded ssh key without a passphrase
+          - base64 -d ~/.ssh/id_rsa.tmp > ~/.ssh/id_rsa
+          - chmod 600 ~/.ssh/id_rsa
+          - base64 ~/.ssh/id_rsa
+          - cat ~/.ssh/id_rsa
+
+          # get deps
+          - cd $IMPORT_PATH && dog 
+          - dog pulldeps
+
+          # build code
+          - dog compile
+          
+          # lint code
+          - dog lint
+
+
